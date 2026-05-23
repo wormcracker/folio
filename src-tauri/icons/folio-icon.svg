@@ -1,0 +1,17 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="fg" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#58a6ff"/>
+      <stop offset="100%" stop-color="#bc8cff"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="80" fill="#0d1117"/>
+  <rect x="80" y="64" width="248" height="352" rx="20" fill="#161b22" stroke="url(#fg)" stroke-width="8"/>
+  <rect x="120" y="64" width="272" height="352" rx="20" fill="#1c2128" stroke="url(#fg)" stroke-width="8"/>
+  <line x1="164" y1="168" x2="348" y2="168" stroke="#58a6ff" stroke-width="12" stroke-linecap="round"/>
+  <line x1="164" y1="216" x2="348" y2="216" stroke="url(#fg)" stroke-width="12" stroke-linecap="round" opacity="0.7"/>
+  <line x1="164" y1="264" x2="280" y2="264" stroke="#bc8cff" stroke-width="12" stroke-linecap="round" opacity="0.5"/>
+  <rect x="280" y="300" width="156" height="132" rx="20" fill="#0f1117" stroke="url(#fg)" stroke-width="8"/>
+  <path d="M358 330 C358 308 374 294 390 294 C406 294 422 308 422 330" stroke="url(#fg)" stroke-width="10" stroke-linecap="round" fill="none"/>
+  <circle cx="346" cy="366" r="14" fill="url(#fg)"/>
+</svg>

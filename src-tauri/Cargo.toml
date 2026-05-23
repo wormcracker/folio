@@ -1,0 +1,37 @@
+[package]
+name = "markvault"
+version = "0.1.0"
+description = "MarkVault - Beautiful Markdown Viewer"
+authors = ["you"]
+license = ""
+repository = ""
+default-run = "markvault"
+edition = "2021"
+rust-version = "1.70"
+
+[build-dependencies]
+tauri-build = { version = "1.5", features = [] }
+
+[dependencies]
+tauri = { version = "1.6", features = [ "protocol-asset",
+  "fs-remove-file",
+  "shell-open",
+  "dialog-open",
+  "fs-read-file",
+  "fs-read-dir",
+  "path-all",
+  "window-all",
+  "app-all",
+  "custom-protocol"      # FIX: required for release builds — serves frontend assets
+                         # via tauri:// protocol instead of localhost
+] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+dirs = "5"
+
+[features]
+# FIX: custom-protocol must be the default feature so `cargo build --release`
+# picks it up automatically. Without this the bundled .app has no way to load
+# the frontend and the window opens blank / never appears.
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
