@@ -29,6 +29,10 @@ Folio is a lightweight, distraction-free document reader built on [Tauri](https:
 
 ## Installation
 
+- Directly Install from release page.
+
+## Build
+
 ### Prerequisites
 
 - [Node.js](https://nodejs.org) 18+
