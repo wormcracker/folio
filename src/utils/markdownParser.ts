@@ -2,6 +2,7 @@ import { marked } from "marked";
 import { markedHighlight } from "marked-highlight";
 import hljs from "highlight.js";
 import DOMPurify from "dompurify";
+import yaml from "js-yaml";
 
 // FIX: Code copy shows raw HTML spans instead of source text.
 //
@@ -50,6 +51,65 @@ export interface Heading {
   level: number;
 }
 
+export type Frontmatter = Record<string, unknown>;
+
+// ── YAML frontmatter ─────────────────────────────────────────────────────
+// Matches a leading `---` block, e.g.:
+//   ---
+//   title: My Note
+//   tags: [a, b]
+//   ---
+//   # body...
+const FRONTMATTER_RE = /^---\r?\n([\s\S]*?)\r?\n---[ \t]*\r?\n?/;
+
+function extractFrontmatter(content: string): { data: Frontmatter | null; body: string } {
+  const match = content.match(FRONTMATTER_RE);
+  if (!match) return { data: null, body: content };
+  try {
+    const parsed = yaml.load(match[1]);
+    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+      return { data: parsed as Frontmatter, body: content.slice(match[0].length) };
+    }
+    return { data: null, body: content };
+  } catch {
+    // Malformed YAML — leave the block as regular markdown rather than losing content.
+    return { data: null, body: content };
+  }
+}
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function renderFrontmatterValue(value: unknown): string {
+  if (Array.isArray(value)) {
+    return `<div class="md-fm-tags">${value
+      .map((v) => `<span class="md-fm-tag">${escapeHtml(String(v))}</span>`)
+      .join("")}</div>`;
+  }
+  if (value && typeof value === "object") {
+    return `<code class="md-fm-code">${escapeHtml(JSON.stringify(value))}</code>`;
+  }
+  if (typeof value === "boolean") {
+    return `<span class="md-fm-bool md-fm-bool--${value}">${value ? "true" : "false"}</span>`;
+  }
+  return escapeHtml(String(value));
+}
+
+function renderFrontmatter(data: Frontmatter): string {
+  const rows = Object.entries(data)
+    .map(
+      ([key, value]) =>
+        `<tr><td class="md-fm-key">${escapeHtml(key)}</td><td class="md-fm-value">${renderFrontmatterValue(value)}</td></tr>`
+    )
+    .join("");
+  return `<div class="md-frontmatter"><table class="md-fm-table"><tbody>${rows}</tbody></table></div>`;
+}
+
 function slugify(text: string): string {
   return text
     .toLowerCase()
@@ -63,9 +123,11 @@ export function parseMarkdown(
   content: string,
   filePath: string,
   _onLinkClick: (href: string, filePath: string) => void
-): { html: string; headings: Heading[] } {
+): { html: string; headings: Heading[]; frontmatter: Frontmatter | null } {
   const headings: Heading[] = [];
   const usedSlugs = new Map<string, number>();
+
+  const { data: frontmatter, body } = extractFrontmatter(content);
 
   // Clear queues before each parse
   rawCodeQueues.clear();
@@ -121,7 +183,9 @@ export function parseMarkdown(
 
   marked.use({ renderer });
 
-  const rawHtml = marked.parse(content) as string;
+  const bodyHtml = marked.parse(body) as string;
+  const fmHtml = frontmatter ? renderFrontmatter(frontmatter) : "";
+  const rawHtml = fmHtml + bodyHtml;
 
   const html = DOMPurify.sanitize(rawHtml, {
     ADD_ATTR: [
@@ -132,5 +196,5 @@ export function parseMarkdown(
     FORCE_BODY: false,
   });
 
-  return { html, headings };
+  return { html, headings, frontmatter };
 }

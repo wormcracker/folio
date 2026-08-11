@@ -42,6 +42,32 @@ export default function App() {
   // Apply theme
   useEffect(() => { document.documentElement.setAttribute("data-theme", theme); }, [theme]);
 
+  // Auto-load the containing directory of whichever file is active — on initial
+  // open, when opening a new file, when switching tabs, when following an
+  // internal link, and when navigating back/forward through tabs (Shift+J/K).
+  // The sidebar's "files" panel always mirrors the active file's folder.
+  useEffect(() => {
+    if (!activeTab) return;
+    const filePath = activeTab.filePath;
+    const lastSlash = filePath.lastIndexOf("/");
+    if (lastSlash <= 0) return;
+    const dir = filePath.slice(0, lastSlash);
+    const { openFolder: currentFolder } = useAppStore.getState();
+    if (currentFolder === dir) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const files = await readDirMd(dir);
+        if (cancelled) return;
+        setOpenFolder(dir);
+        setFolderFiles(files);
+      } catch {
+        // Directory may be unreadable (e.g. sandboxed path) — leave sidebar as-is.
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [activeTab?.filePath, setOpenFolder, setFolderFiles]);
+
   // App-level drag & drop
   useEffect(() => {
     const onOver = (e: DragEvent) => { e.preventDefault(); if (e.dataTransfer) e.dataTransfer.dropEffect = "copy"; };

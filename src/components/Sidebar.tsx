@@ -579,7 +579,7 @@ export function Sidebar({ headings, onHeadingClick, activeHeadingId }: SidebarPr
   };
 
   const folderHasMd = (dir: string) =>
-    folderFiles.some((f) => !f.is_dir && f.path.startsWith(dir + "/") && ["md","markdown","pdf"].includes(f.extension));
+    folderFiles.some((f) => !f.is_dir && f.path.startsWith(dir + "/") && f.supported);
 
   const buildTree = (parentPath: string) =>
     folderFiles
@@ -595,7 +595,7 @@ export function Sidebar({ headings, onHeadingClick, activeHeadingId }: SidebarPr
           <div key={file.path}>
             <div style={{ paddingLeft: depth * 12 }}
               className={`sidebar-file-item sidebar-dir${hasMd ? "" : " sidebar-dir--empty"}`}
-              onClick={() => hasMd && toggleDir(file.path)} title={file.path}>
+              onClick={() => toggleDir(file.path)} title={file.path}>
               <span className="sidebar-icon">{expanded ? "▾" : "▸"}</span>
               <span className="sidebar-file-name">{file.name}</span>
             </div>
@@ -603,11 +603,14 @@ export function Sidebar({ headings, onHeadingClick, activeHeadingId }: SidebarPr
           </div>
         );
       }
-      if (!["md","markdown","txt","pdf"].includes(file.extension)) return null;
+      const disabled = !file.supported;
       return (
         <div key={file.path} style={{ paddingLeft: depth * 12 + 12 }}>
-          <div className={`sidebar-file-item sidebar-file ${file.extension === "pdf" ? "sidebar-pdf" : ""}`}
-            onClick={() => handleFileOpen(file.path)} title={file.path}>
+          <div
+            className={`sidebar-file-item sidebar-file ${file.extension === "pdf" ? "sidebar-pdf" : ""}${disabled ? " sidebar-file--disabled" : ""}`}
+            onClick={() => !disabled && handleFileOpen(file.path)}
+            title={disabled ? `${file.path} (unsupported file type)` : file.path}
+          >
             <span className="sidebar-icon">{file.extension === "pdf" ? "⬜" : "·"}</span>
             <span className="sidebar-file-name">{file.name}</span>
           </div>

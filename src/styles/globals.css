@@ -1671,8 +1671,16 @@ mark.md-bm-highlight[data-note]:not([data-note=""]):hover::after {
 /* Sidebar PDF file tint */
 .sidebar-pdf .sidebar-file-name { color: var(--red); opacity: 0.85; }
 
-/* Empty dir muted */
-.sidebar-dir--empty { opacity: 0.45; cursor: not-allowed !important; }
+/* Dir with no directly-openable files inside — dimmed but still navigable */
+.sidebar-dir--empty { opacity: 0.55; }
+
+/* Unsupported files in the file tree — visible but inert */
+.sidebar-file--disabled {
+  opacity: 0.35;
+  cursor: not-allowed !important;
+  pointer-events: none;
+}
+.sidebar-file--disabled:hover { background: transparent !important; color: var(--text2) !important; }
 
 /* ════════════════════════════════════════════════════════════
    PDF JUMP MODAL — tab hint badge

@@ -14,6 +14,11 @@ struct FileEntry {
   path: String,
   is_dir: bool,
   extension: String,
+  supported: bool,
+}
+
+fn is_supported_ext(ext: &str) -> bool {
+  matches!(ext, "md" | "markdown" | "txt" | "pdf")
 }
 
 #[tauri::command]
@@ -59,14 +64,17 @@ fn collect_files(dir: &Path, entries: &mut Vec<FileEntry>) -> Result<(), String>
         path: p.to_string_lossy().into(),
         is_dir: true,
         extension: String::new(),
+        supported: true,
       });
       let _ = collect_files(&p, entries);
-    } else if ["md", "markdown", "txt", "pdf"].contains(&ext.as_str()) {
+    } else {
+      let supported = is_supported_ext(&ext);
       entries.push(FileEntry {
         name,
         path: p.to_string_lossy().into(),
         is_dir: false,
         extension: ext,
+        supported,
       });
     }
   }

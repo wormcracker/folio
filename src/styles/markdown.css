@@ -1,3 +1,62 @@
+/* ─── YAML Frontmatter card ─── */
+.md-frontmatter {
+  margin: 0 0 1.8em;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg2);
+  overflow: hidden;
+  font-family: var(--font-sans);
+}
+.md-fm-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.md-fm-table tr:not(:last-child) td {
+  border-bottom: 1px solid var(--border);
+}
+.md-fm-key {
+  padding: 7px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text3);
+  white-space: nowrap;
+  vertical-align: top;
+  width: 1%;
+}
+.md-fm-value {
+  padding: 7px 14px;
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.5;
+  word-break: break-word;
+}
+.md-fm-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.md-fm-tag {
+  font-size: 11px;
+  color: var(--accent);
+  background: var(--accent-bg);
+  border-radius: 10px;
+  padding: 1px 9px;
+}
+.md-fm-code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text2);
+}
+.md-fm-bool {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+}
+.md-fm-bool--true { color: var(--green); }
+.md-fm-bool--false { color: var(--text3); }
+
 /* ─── Markdown Typography ─── */
 .markdown-body {
   font-family: var(--font-serif);

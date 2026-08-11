@@ -77,7 +77,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
 // ─── Other types ─────────────────────────────────────────────────────────────
 export interface RecentFile { path: string; name: string; openedAt: number; lastPage?: number; lastHeadingId?: string; lastScrollY?: number; }
 export type Theme = "dark" | "light";
-export interface FolderFile { name: string; path: string; is_dir: boolean; extension: string; }
+export interface FolderFile { name: string; path: string; is_dir: boolean; extension: string; supported: boolean; }
 
 // ─── Store ───────────────────────────────────────────────────────────────────
 interface AppState {
